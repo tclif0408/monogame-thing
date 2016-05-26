@@ -1,22 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace radicalgame
 {
     class Player
     {
+        public static float GravitySpeed = 5.0f;
+
         public static Vector2 PlayerDimensions
         {
             get
             {
-                return new Vector2(30.0f, 30.0f);
+                return new Vector2(50.0f, 100.0f);
+            }
+        }
+
+        public static float PlayerSpeed
+        {
+            get
+            {
+                return 5.0f;
             }
         }
 
@@ -31,10 +34,8 @@ namespace radicalgame
             _boundingBox = new RectangleF();
             _boundingBox.XY = position;
             _boundingBox.Dimensions = PlayerDimensions;
-            Velocity = new Vector2();
         }
 
-        public Vector2 Velocity { get; set; }
         public Vector2 Position
         {
             get
@@ -59,24 +60,20 @@ namespace radicalgame
         {
             // TODO: incorporate time into update calculations
 
-            Velocity = Vector2.Zero;
+            Vector2 Velocity = Vector2.Zero;
 
-            if (_game.InputState.CurrentKS.IsKeyDown(Keys.D))
+            // horizontal movement
+            if (_game.InputState.CurrentKS.IsKeyDown(_game.Controls.Right))
             {
-                Velocity += new Vector2(3.0f, 0.0f);
+                Velocity += new Vector2(PlayerSpeed, 0.0f);
             }
-            if (_game.InputState.CurrentKS.IsKeyDown(Keys.A))
+            if (_game.InputState.CurrentKS.IsKeyDown(_game.Controls.Left))
             {
-                Velocity += new Vector2(-3.0f, 0.0f);
+                Velocity += new Vector2(-PlayerSpeed, 0.0f);
             }
-            if (_game.InputState.CurrentKS.IsKeyDown(Keys.W))
-            {
-                Velocity += new Vector2(0.0f, -3.0f);
-            }
-            if (_game.InputState.CurrentKS.IsKeyDown(Keys.S))
-            {
-                Velocity += new Vector2(0.0f, 3.0f);
-            }
+
+            // vertical movement
+            Velocity += new Vector2(0.0f, GravitySpeed);
 
             Position += Velocity;
         }

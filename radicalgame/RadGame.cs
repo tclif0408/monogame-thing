@@ -2,6 +2,8 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
+using System.Collections.Generic;
+
 namespace radicalgame
 {
     /// <summary>
@@ -13,9 +15,12 @@ namespace radicalgame
         SpriteBatch spriteBatch;
 
         public UserInputState InputState { get; set; }
+        public ControlScheme Controls { get; set; }
+
         Texture2D blank;
         Camera2D viewCamera;
         Player testPlayer;
+        List<Tile> worldTiles;
 
         public RadGame()
         {
@@ -35,15 +40,24 @@ namespace radicalgame
             blank = new Texture2D(GraphicsDevice, 1, 1);
             blank.SetData(new Color[] { Color.White });
 
+            Controls = ControlScheme.Default;
+
             viewCamera = new Camera2D(new Rectangle(0, 0, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight));
             viewCamera.Position = new Vector2(0.0f, 0.0f);
 
-            testPlayer = new Player(this, blank, Vector2.Zero);
+            testPlayer = new Player(this, blank, new Vector2(50.0f, -250.0f));
 
             IsMouseVisible = true;
 
             InputState = new UserInputState();
 
+            worldTiles = new List<Tile>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                worldTiles.Add(new Tile(new Vector2(Tile.TileDimensions.X * i, 0.0f), blank));
+            }
+            
             base.Initialize();
         }
 
@@ -75,8 +89,10 @@ namespace radicalgame
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Controls.Pause))
+            {
                 Exit();
+            }
 
             // update input
             InputState.CurrentKS = Keyboard.GetState();
@@ -103,9 +119,10 @@ namespace radicalgame
             // Draw the game
             spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, viewCamera.viewMatrix);
 
-            spriteBatch.Draw(blank, new Rectangle(-50, -50, 30, 30), Color.White);
-            spriteBatch.Draw(blank, new Rectangle(130, 30, 30, 30), Color.White);
-            spriteBatch.Draw(blank, new Rectangle(70, 70, 30, 30), Color.White);
+            foreach (Tile t in worldTiles)
+            {
+                t.Draw(spriteBatch);
+            }
 
             testPlayer.Draw(spriteBatch);
 

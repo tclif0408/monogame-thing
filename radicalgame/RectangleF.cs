@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace radicalgame
 {
@@ -17,6 +11,11 @@ namespace radicalgame
             Y = y;
             Width = width;
             Height = height;
+        }
+        public RectangleF(Vector2 position, Vector2 size)
+        {
+            XY = position;
+            Dimensions = size;
         }
 
         public float X { get; set; }
